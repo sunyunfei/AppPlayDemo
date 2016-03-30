@@ -6,7 +6,7 @@
 //  Copyright © 2016年 haidai. All rights reserved.
 //
 /**
- *  失败案例
+ *  失败案例,又修改成功
  *
  *  @param IBAction <#IBAction description#>
  *
@@ -39,33 +39,10 @@
 - (IBAction)clickBtn:(id)sender {
 
     if([PKPaymentAuthorizationViewController canMakePayments]) {
-        
-        NSLog(@"Woo! Can make payments!");
-        
-        PKPaymentRequest *request = [[PKPaymentRequest alloc] init];
-        
-        PKPaymentSummaryItem *widget1 = [PKPaymentSummaryItem summaryItemWithLabel:@"Widget 1"
-                                                                            amount:[NSDecimalNumber decimalNumberWithString:@"0.99"]];
-        
-        PKPaymentSummaryItem *widget2 = [PKPaymentSummaryItem summaryItemWithLabel:@"Widget 2"
-                                                                            amount:[NSDecimalNumber decimalNumberWithString:@"1.00"]];
-        
-        PKPaymentSummaryItem *total = [PKPaymentSummaryItem summaryItemWithLabel:@"Grand Total"
-                                                                          amount:[NSDecimalNumber decimalNumberWithString:@"1.99"]];
-        
-        request.paymentSummaryItems = @[widget1, widget2, total];
-        request.countryCode = @"CN";
-        request.currencyCode = @"CNY";
-        request.supportedNetworks = @[PKPaymentNetworkAmex, PKPaymentNetworkMasterCard, PKPaymentNetworkVisa];
-        request.merchantIdentifier = @"merchant.com.testAppPlay";
-        request.merchantCapabilities = PKMerchantCapabilityEMV;
-        
-        PKPaymentAuthorizationViewController *paymentPane = [[PKPaymentAuthorizationViewController alloc] initWithPaymentRequest:request];
-        paymentPane.delegate = self;
-        [self presentViewController:paymentPane animated:TRUE completion:nil];
+        [self appPlay];
         
     } else {
-        NSLog(@"This device cannot make payments");
+        NSLog(@"不支持AppPlay支付");
     }
 
 }
@@ -77,10 +54,13 @@
     //创建支付类
      PKPaymentRequest *request = [[PKPaymentRequest alloc] init];
     //支付的商品
-    PKPaymentSummaryItem *good1 = [PKPaymentSummaryItem summaryItemWithLabel:@"HHKB professional 2" amount:[NSDecimalNumber decimalNumberWithString:@"1388"]];  PKPaymentSummaryItem *good2 = [PKPaymentSummaryItem summaryItemWithLabel:@"营养快线" amount:[NSDecimalNumber decimalNumberWithString:@"4"]];  PKPaymentSummaryItem *total = [PKPaymentSummaryItem summaryItemWithLabel:@"德玛西亚" amount:[NSDecimalNumber decimalNumberWithString:@"1392"]];
+    PKPaymentSummaryItem *good1 = [PKPaymentSummaryItem summaryItemWithLabel:@"你要来一发吗" amount:[NSDecimalNumber decimalNumberWithString:@"10000.00"]];
     
-    request.paymentSummaryItems = @[ good1, good2, total ];
+    PKPaymentSummaryItem *total = [PKPaymentSummaryItem summaryItemWithLabel:@"并不约" amount:[NSDecimalNumber decimalNumberWithString:@"0.01"]];
+    
+    request.paymentSummaryItems = @[ good1, total ];
     //货币的单位
+    request.countryCode = @"CN";
     request.currencyCode = @"CNY";
     //所绑定的卡的类型
     request.supportedNetworks = @[ PKPaymentNetworkMasterCard, PKPaymentNetworkVisa, PKPaymentNetworkChinaUnionPay ];
@@ -102,38 +82,14 @@
                        didAuthorizePayment:(PKPayment *)payment
                                 completion:(void (^)(PKPaymentAuthorizationStatus status))completion
 {
-    NSLog(@"Payment was authorized: %@", payment);
+    //支付需要后端的支持
 
-    BOOL asyncSuccessful = FALSE;
-    
-
-    
-    if(asyncSuccessful) {
-        completion(PKPaymentAuthorizationStatusSuccess);
-        
-        // do something to let the user know the status
-        
-        NSLog(@"Payment was successful");
-        
-        //        [Crittercism endTransaction:@"checkout"];
-        
-    } else {
-        completion(PKPaymentAuthorizationStatusFailure);
-        
-        // do something to let the user know the status
-        
-        NSLog(@"Payment was unsuccessful");
-        
-        //        [Crittercism failTransaction:@"checkout"];
-    }
-    
 }
 
 - (void)paymentAuthorizationViewControllerDidFinish:(PKPaymentAuthorizationViewController *)controller
 {
-    NSLog(@"Finishing payment view controller");
+    NSLog(@"支付成功");
     
-    // hide the payment window
     [controller dismissViewControllerAnimated:TRUE completion:nil];
 }
 @end
